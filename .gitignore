@@ -1,0 +1,13 @@
+# ignore LaTeX output files
+*.aux
+*.lof
+*.log
+*.log
+*.lot
+*.out
+*.toc
+*.bbl
+*.blg
+*.xwm
+*.pyrc
+*.orig
