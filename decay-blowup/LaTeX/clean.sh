@@ -1,0 +1,9 @@
+rm -f *.bbl
+rm -f *.blg
+rm -f *.log
+rm -f *.lof
+rm -f *.lot
+rm -f *.aux
+rm -f *.xwm
+rm -f *.toc
+rm -f *.out
