@@ -11,3 +11,6 @@
 *.xwm
 *.pyrc
 *.orig
+*.pdf
+*.swp
+*.sw*
