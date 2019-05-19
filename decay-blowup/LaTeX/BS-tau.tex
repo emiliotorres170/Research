@@ -1,0 +1,110 @@
+\documentclass[12pt]{article}
+\input{/media/sf_windows/common-LaTeX/preamble}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\fancyhead[L]{Basic Smagorinsky Subgrid Stress}
+\fancyhead[R]{E. Torres}
+\fancyhead[C]{}
+\fancyfoot[L]{\today}
+\fancyfoot[R]{\thepage}
+\fancyfoot[C]{}
+\begin{document}
+\section{Basic Smagorinsky Subgrid Stress}
+The subgrid stress is for Basic Samgorinsky is calculated using the following
+\begin{equation}
+    \tau_{ij} \equiv \widetilde{u_i u_j} - \widetilde{u_i} \widetilde{u_j}
+                = 2 \nu_{sgs} \widetilde{S}_{ij}
+    \label{eq:tauij}
+\end{equation}
+Where for Basic Smagorinsky the eddy viscosity is modeled as  
+\begin{equation}
+    \nu_{sgs} \approx 2 \left(C_{s} \Delta \right)^{2} \left| \widetilde{S} \right|
+    \label{eq:nu-sgs}
+\end{equation}
+Thus the resulting subgrid stress is given as
+\begin{equation}
+    \tau_{ij} = 2 \left(C_{s} \Delta \right)^{2} \left| \widetilde{S} \right|\widetilde{S}_{ij}
+    \label{eq:tauij-2}
+\end{equation}
+Requiring the subgrid-scale dissipation $\langle \varepsilon \rangle$ to equal the true kinetic
+energy dissipation, namely 
+\begin{equation}
+    \langle \varepsilon \rangle \equiv \tau_{ij} \widetilde{S}_{ij} = \varepsilon
+    \label{eq:subgrid-diss}
+\end{equation}
+gives,
+\begin{equation}
+    C_{s}^{2} = \frac{\varepsilon}{\Big \langle 2 \Delta^{2} \left| \widetilde{S} \right| ^{3} \Big \rangle}
+    \label{eq:cs}
+\end{equation}
+Where the true kinetic energy dissipation is given by 
+\begin{equation}
+    \varepsilon = 2 \nu \widetilde{S}_{ij} \widetilde{S}_{ij}
+    \label{eq:dissp-rate}
+\end{equation}
+\begin{enumerate}
+    \item   {\color{red} Question: Since we are using the filtered strain rate fields to find
+        $\varepsilon$ is this still the true kinetic energy dissipation? I do not think it is the
+        true dissipation but we do not have or will have the true strain rates, so I think this has
+        to be the kinetic energy dissipation field.}
+    \item {\color{red}Question: How do we find $\Delta$ ? From reading the \texttt{HIT-input.txt}
+        file it appears there is a spectrally sharp cutoff at $k=30$. If this understanding is
+        correct, can I use a sin filter in the physical space? I guess I am not sure on how we
+        exactly multiply by the filter. }
+\end{enumerate}
+\section{Spectrally Sharp Filter}
+According to the \texttt{HIT\_demo\_inputs.txt} file the pseudo spectral
+solver applies a spectrally sharp cutoff filter at $k=30$, and therefore
+this analysis is attempting to understand how we calculate  the filter
+$\Delta$ in order to determine $\tau_{ij}$. Starting with a spectrally
+sharp filter with a cutoff wavenumber of $k=30$ 
+\begin{equation}
+    G(k) = 
+    \begin{cases}
+        0 \text{ if $k < 30$}             \\
+        1 \text{ if $0 \leq k \leq 30$}   \\
+        0 \text{ if $k >30$}              \\
+    \end{cases}
+\end{equation}
+shown visually in Fig.~\ref{fig:gk}.
+\begin{figure}
+    \includegraphics[height=\figheight\textheight]{../Python/media/Gk}
+    \caption{Spectrally sharp filter with $k=30$ cutoff}
+    \label{fig:gk}
+\end{figure}
+Next the inverse Fourier transform $\mathcal{F}(x)$ can be obtain using the
+following 
+\begin{equation}
+    \mathcal{F}(x) \equiv \int_{-\infty}^{\infty} G(k) e^{-ikx} dk
+\end{equation}
+Splitting up the integrals gives     
+\begin{subequations}
+    \begin{equation}                 
+        \mathcal{F}(x) =    \int_{-\infty}^{0} G(k) e^{-ikx} dk +
+                            \int_{0}^{30} G(k) e^{-ikx} dk + 
+                            \int_{30}^{\infty} G(k) e^{-ikx} dk
+    \end{equation}
+    \begin{equation}
+        \mathcal{F}(x) = 0 + \int_{0}^{30} e^{-ikx} dk + 0
+    \end{equation}
+    \begin{equation}
+        \mathcal{F}(x) = \int_{0}^{30} e^{ikx} dk = -\frac{1}{ix} \left( e^{-30ix} - 1 \right)
+    \end{equation}
+\end{subequations}
+where $x$ is defined as 
+\begin{equation}
+    x \equiv \frac{2\pi}{k}
+\end{equation}
+Figures~\ref{fig:finv} \& \ref{fig:finv-2} visually displays $\mathcal{F}(x)$ for a spectrally
+sharp filter.
+\begin{figure}
+    \includegraphics[height=\figheight\textheight]{../Python/media/Finv}
+    \caption{Inverse Fourier Transform for a spectrally sharp filter}
+    \label{fig:finv}
+\end{figure}
+\begin{figure}
+    \includegraphics[height=\figheight\textheight]{../Python/media/Finv2}
+    \caption{Inverse Fourier Transform for a spectrally sharp filter}
+    \label{fig:finv-2}
+\end{figure}
+\end{document}
