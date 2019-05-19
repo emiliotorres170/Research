@@ -7,3 +7,4 @@ rm -f *.aux
 rm -f *.xwm
 rm -f *.toc
 rm -f *.out
+rm -f *.pdf
